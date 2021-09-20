@@ -1,0 +1,7 @@
+{
+  "name": "SCOS-App",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

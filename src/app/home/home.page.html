@@ -4,8 +4,8 @@
     <ion-item>
       <ion-label>Tipo de reporte</ion-label>
       <ion-select formControlName="tipo" placeholder="Elige uno">
-        <ion-select-option value="FALLA">Falla</ion-select-option>
         <ion-select-option value="SOLUCION">Solución</ion-select-option>
+        <ion-select-option value="FALLA">Falla</ion-select-option>
       </ion-select>
     </ion-item>
   
@@ -32,14 +32,17 @@
     <ion-item>
       <ion-input formControlName="lugar" placeholder="Lugar"></ion-input>
     </ion-item>
-
-    <!-- Default List Header -->
-    <ion-list-header>
-      <ion-label>Fallas: </ion-label>
-    </ion-list-header>
   </form>
 
-  <ion-list>
+  <section *ngIf="form.value.tipo" style="margin: 20px;">
+    <ion-button (click)="openModal()" expand="block">Agregar</ion-button>
+  </section>
+
+  <ion-list-header *ngIf="form.value.tipo">
+    <ion-label>{{ form.value.tipo == 'SOLUCION' ? 'Soluciones': 'Fallas' }}:</ion-label>
+  </ion-list-header>
+
+  <ion-list *ngIf="form.value.tipo">
       <!---
         Este es el que necesitaré por mientras
         <ion-item>

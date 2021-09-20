@@ -1,3 +1,16 @@
-<p>
-  modal-item works!
-</p>
+<ion-content [fullscreen]="true">
+  <form>
+  
+    <ion-item>
+      <ion-input placeholder="Asunto"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-textarea rows="5"></ion-textarea>
+    </ion-item>   
+  </form>
+
+  <section (click)="dismissController()"  style="margin: 20px;">
+    <p>Seleccionar foto(s)</p>
+  </section>
+</ion-content>

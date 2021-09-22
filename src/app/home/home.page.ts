@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { ModalController } from '@ionic/angular';
-import { ModalItemComponent } from '../modal-item/modal-item.component';
+import { ModalPage } from '../modal/modal.page';
+
 
 @Component({
   selector: 'app-home',
@@ -43,7 +44,7 @@ export class HomePage implements OnInit {
       falla = true
     }
     const modal = await this.modalController.create({
-      component: ModalItemComponent,
+      component: ModalPage,
       cssClass: 'my-custom-class',
       componentProps: {
         falla: falla

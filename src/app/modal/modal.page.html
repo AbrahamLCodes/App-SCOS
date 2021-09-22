@@ -1,0 +1,33 @@
+<ion-content [fullscreen]="true">
+  <form>
+  
+    <ion-item>
+      <ion-input placeholder="Asunto"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-textarea rows="5"></ion-textarea>
+    </ion-item>   
+
+    <ngx-dropzone [multiple]="false" class="dropzone" (change)="onSelect($event)">
+      <ngx-dropzone-label>Cargar una imagen de perfil(max 2mb) <br> 500px X 500px </ngx-dropzone-label>
+      <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files" [file]="f">
+        <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+      </ngx-dropzone-image-preview>
+    </ngx-dropzone>
+
+    <section style="margin-left: 20px; margin-top:20px">
+      
+    </section> 
+
+    <div class="row">
+      <div class="col text-left">
+        <ion-button color="danger">Danger</ion-button>
+      </div>
+      
+      <div class="col text-right">
+        <ion-button color="success">Success</ion-button>
+      </div>
+    </div>
+  </form>
+</ion-content>

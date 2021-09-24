@@ -46,6 +46,10 @@ export class HomePage implements OnInit {
     this.cargarItems()
   }
 
+  public generarPDF(){
+    this.appService.generarPDF(this.form.value)
+  }
+
   private cargarItems(){
     this.items = this.appService.getReporteObject()
   }

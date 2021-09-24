@@ -34,15 +34,15 @@
     </ion-item>
   </form>
 
-  <section style="margin: 20px;">
+  <section *ngIf="form.value.tipo" style="margin: 20px;">
     <ion-button (click)="openModal(false, 0)" expand="block">Agregar</ion-button>
   </section>
 
-  <ion-list-header>
+  <ion-list-header *ngIf="form.value.tipo">
     <ion-label>{{ form.value.tipo == 'SOLUCION' ? 'Soluciones': 'Fallas' }}:</ion-label>
   </ion-list-header>
 
-  <ion-list>
+  <ion-list *ngIf="form.value.tipo">
     <ion-item *ngFor="let item of items; index as index" (click)="clickItem(index)">
       <ion-avatar slot="start">
         <img [src]="item.base64Images[0]">
@@ -53,4 +53,8 @@
       </ion-label>
     </ion-item>
   </ion-list>
+
+  <section style="margin: 20px;">
+    <ion-button (click)="generarPDF()" expand="block">Generar PDF</ion-button>
+  </section>
 </ion-content>

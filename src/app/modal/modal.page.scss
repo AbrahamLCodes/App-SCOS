@@ -1,5 +1,19 @@
 .center {
-    margin: auto;
-    width: 50%;
-    padding: 10px;
-  }
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+.contFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 15px 0px;
+}
+
+.contFlex .contItem {
+  width: 48%;
+  font-size: 12pt !important;
+  margin: 1%;
+}

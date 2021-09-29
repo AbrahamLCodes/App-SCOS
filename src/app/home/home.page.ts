@@ -6,6 +6,7 @@ import { ModalController } from '@ionic/angular';
 import { alertController } from '@ionic/core';
 import { ModalPage } from '../modal/modal.page';
 import { AppService } from '../services/app.service';
+//import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 
 @Component({
@@ -22,7 +23,8 @@ export class HomePage implements OnInit {
     fb: FormBuilder,
     private modalController: ModalController,
     private appService: AppService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    //private androidPermissions: AndroidPermissions
   ) {
     this.form = fb.group({
       tipo: [null, Validators.required],
@@ -44,13 +46,20 @@ export class HomePage implements OnInit {
 
   public ionViewDidEnter() {
     this.cargarItems()
+
+    /*this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then(
+      result => console.log('Has permission?',result.hasPermission),
+      err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
+    );
+    
+    this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE, this.androidPermissions.PERMISSION.GET_ACCOUNTS]);*/
   }
 
-  public generarPDF(){
+  public generarPDF() {
     this.appService.generarPDF(this.form.value)
   }
 
-  private cargarItems(){
+  private cargarItems() {
     this.items = this.appService.getReporteObject()
   }
 
@@ -76,7 +85,7 @@ export class HomePage implements OnInit {
         {
           text: "Aceptar",
           handler: data => {
-            if(data ==  "ELIMINAR"){
+            if (data == "ELIMINAR") {
               this.appService.deleteReporte(index)
               this.cargarItems()
             } else {

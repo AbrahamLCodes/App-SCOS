@@ -8,6 +8,9 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 
+import { HttpClientModule } from "@angular/common/http"
+import { FileOpener } from "@ionic-native/file-opener/ngx"
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -15,9 +18,13 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
     BrowserModule,
     IonicModule.forRoot(), 
     AppRoutingModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    HttpClientModule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    FileOpener
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

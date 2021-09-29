@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Directory, Filesystem, FilesystemDirectory } from '@capacitor/filesystem';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { AlertController, ToastController } from '@ionic/angular';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -15,7 +17,8 @@ export class AppService {
 
   constructor(
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private fileOpener: FileOpener
   ) { }
 
   public submitReporte(item: any) {
@@ -205,7 +208,35 @@ export class AppService {
       }
     }
 
-    pdfMake.createPdf(docDefinition).open()
+    console.log("Antes del base 64");
+    const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+
+    pdfDocGenerator.getBase64(async data => {
+      try {
+        let path = `pdf/reporte.pdf`
+        console.log("Antes del Filesystem");
+        
+        const result = await Filesystem.writeFile({
+          path,
+          data,
+          directory: Directory.Documents,
+          recursive: true
+        })
+
+        console.log("Despues del File system");
+        console.log("Antes del open");
+        
+        this.fileOpener.open(`${result.uri}`, 'application/pdf')
+        console.log("ABRIENDO FILE OPENEEEER");
+        
+      } catch (e) {
+        console.log("No fue posible crear el archivo");
+        console.log(e);
+      }
+    })
+
+    console.log("Despues del base 64");
+    
   }
 
   public writeRotatedImage = imagen => {

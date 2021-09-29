@@ -54,7 +54,7 @@
     </ion-item>
   </ion-list>
 
-  <section style="margin: 20px;">
+  <section *ngIf="items.length > 0" style="margin: 20px;">
     <ion-button (click)="generarPDF()" expand="block">Generar PDF</ion-button>
   </section>
 </ion-content>

@@ -5,7 +5,8 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { ModalController } from '@ionic/angular';
 import { alertController } from '@ionic/core';
 import { ModalPage } from '../modal/modal.page';
-import { AppService } from '../services/app.service';
+import { PdfService } from '../services/pdf/pdf.service';
+import { ReporteService } from '../services/reporte/reporte.service';
 //import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 
@@ -22,7 +23,8 @@ export class HomePage implements OnInit {
   constructor(
     fb: FormBuilder,
     private modalController: ModalController,
-    private appService: AppService,
+    private reporte: ReporteService,
+    private pdf: PdfService,
     private sanitizer: DomSanitizer,
     //private androidPermissions: AndroidPermissions
   ) {
@@ -37,14 +39,14 @@ export class HomePage implements OnInit {
     })
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     SplashScreen.show({
       showDuration: 2000,
       autoHide: true
     });
   }
 
-  public ionViewDidEnter() {
+  public ionViewDidEnter(): void {
     this.cargarItems()
 
     /*this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then(
@@ -55,15 +57,15 @@ export class HomePage implements OnInit {
     this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE, this.androidPermissions.PERMISSION.GET_ACCOUNTS]);*/
   }
 
-  public generarPDF() {
-    this.appService.generarPDF(this.form.value)
+  public generarPDF(): void {
+    this.pdf.generarPDF(this.form.value)
   }
 
   private cargarItems() {
-    this.items = this.appService.getReporteObject()
+    this.items = this.reporte.getReporteObject()
   }
 
-  public async clickItem(index: number) {
+  public async clickItem(index: number): Promise<any> {
     const alert = await alertController.create({
       header: "¿Qué deseas hacer con el item?",
       inputs: [
@@ -86,7 +88,7 @@ export class HomePage implements OnInit {
           text: "Aceptar",
           handler: data => {
             if (data == "ELIMINAR") {
-              this.appService.deleteReporte(index)
+              this.reporte.deleteReporte(index)
               this.cargarItems()
             } else {
               this.openModal(true, index)
@@ -98,7 +100,7 @@ export class HomePage implements OnInit {
     alert.present()
   }
 
-  public async openModal(editar: boolean, index: number) {
+  public async openModal(editar: boolean, index: number): Promise<any> {
     let falla = false
     if (this.form.value.tipo == 'FALLA') {
       falla = true

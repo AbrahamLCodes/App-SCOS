@@ -1,101 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Directory, Filesystem, FilesystemDirectory } from '@capacitor/filesystem';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { AlertController, ToastController } from '@ionic/angular';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { MultimediaService } from '../multimedia/multimedia.service';
+import { ReporteService } from '../reporte/reporte.service';
+import { FechaService } from '../fechas/fecha.service';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
 
 @Injectable({
   providedIn: 'root'
 })
-export class AppService {
-
-  REPORTES_NAME = "itemsSCOS"
-
+export class PdfService {
 
   constructor(
-    private alertController: AlertController,
-    private toastController: ToastController,
+    private multimedia: MultimediaService,
+    private reporte: ReporteService,
+    private fechas: FechaService,
     private fileOpener: FileOpener
   ) { }
 
-  public submitReporte(item: any) {
-    if (!sessionStorage.getItem(this.REPORTES_NAME)) {
-      sessionStorage.setItem(this.REPORTES_NAME, JSON.stringify([]))
-    }
-
-    let items = this.getReporteObject()
-    items.push(item)
-
-    sessionStorage.setItem(this.REPORTES_NAME, JSON.stringify(items))
-  }
-
-  public updateReporte(item: any, index: number) {
-    let items = this.getReporteObject()
-    items[index] = item
-    sessionStorage.setItem(this.REPORTES_NAME, JSON.stringify(items))
-  }
-
-  public deleteReporte(index: number) {
-    let items = this.getReporteObject()
-    items.splice(index, 1)
-    sessionStorage.setItem(this.REPORTES_NAME, JSON.stringify(items))
-  }
-
-  public getReporteObject() {
-    return JSON.parse(sessionStorage.getItem(this.REPORTES_NAME))
-  }
-
-  public async customToast(message: string, color: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      color: color,
-      duration: 2000
-    })
-    toast.present()
-  }
-
-  public async messageToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      color: "primary",
-      duration: 2000
-    })
-    toast.present()
-  }
-
-  public async warningToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      color: "danger",
-      duration: 2000
-    })
-    toast.present()
-  }
-
-  public async acceptMessage(header, message) {
-    const messageAlert = await this.alertController.create({
-      header: header,
-      message: message,
-      buttons: [
-        {
-          text: "Aceptar"
-        }
-      ]
-    });
-    messageAlert.present()
-  }
-
   public construirRenglones() {
-    const items = this.getReporteObject()
-    const rows = []
+    const items = this.reporte.getReporteObject();
+    const rows = [];
     items.forEach(item => {
-      const imagenesArray = []
+      const imagenesArray = [];
       item.base64Images.map(imagen64 => {
         imagenesArray.push([{ image: imagen64, width: 120, margin: [40, 10, 10, 0] }])
-      })
+      });
       rows.push(
         [
           {
@@ -116,13 +48,13 @@ export class AppService {
             layout: "noBorders"
           }
         ]
-      )
+      );
       rows.push(
         [
           { canvas: [{ type: 'line', x1: 20, y1: 0, x2: 520, y2: 0, lineWidth: 1 }] },
           {}
         ]
-      )
+      );
     })
 
     const contentTable = {
@@ -133,20 +65,20 @@ export class AppService {
       layout: "noBorders"
     }
 
-    return contentTable
+    return contentTable;
   }
 
   public async generarPDF(datos: any) {
-    const tipo = datos.tipo
-    const folio = datos.folio
-    const asunto = datos.asunto
-    const administrador = datos.administrador
-    const responsable = datos.responsable
-    const telefono = datos.telefono
-    const lugar = datos.lugar
+    const tipo = datos.tipo;
+    const folio = datos.folio;
+    const asunto = datos.asunto;
+    const administrador = datos.administrador;
+    const responsable = datos.responsable;
+    const telefono = datos.telefono;
+    const lugar = datos.lugar;
 
-    const logoSCOS = await this.getBase64ImageFromURL("../../assets/scos_logo.png")
-    const logoSCOSRotated = await this.getBase64ImageFromURL("../../assets/scos_rotated.png")
+    const logoSCOS = await this.multimedia.getBase64ImageFromURL("../../assets/scos_logo.png");
+    const logoSCOSRotated = await this.multimedia.getBase64ImageFromURL("../../assets/scos_rotated.png");
 
     const docDefinition = {
       pageSize: "A4",
@@ -169,12 +101,11 @@ export class AppService {
             margin: [0, 32, 25, 0],
             layout: "noBorders"
           },
-
         ]
       },
       content: [
         {
-          text: "Chihuahua, Chih; a " + this.oracionFecha(this.hoy()),
+          text: "Chihuahua, Chih; a " + this.fechas.oracionFecha(this.fechas.hoy()),
           margin: [0, 100, 0, 0],
           alignment: "right"
         },
@@ -215,7 +146,7 @@ export class AppService {
       try {
         let path = `pdf/reporte.pdf`
         console.log("Antes del Filesystem");
-        
+
         const result = await Filesystem.writeFile({
           path,
           data,
@@ -225,10 +156,10 @@ export class AppService {
 
         console.log("Despues del File system");
         console.log("Antes del open");
-        
+
         this.fileOpener.open(`${result.uri}`, 'application/pdf')
         console.log("ABRIENDO FILE OPENEEEER");
-        
+
       } catch (e) {
         console.log("No fue posible crear el archivo");
         console.log(e);
@@ -236,7 +167,7 @@ export class AppService {
     })
 
     console.log("Despues del base 64");
-    
+
   }
 
   public writeRotatedImage = imagen => {
@@ -262,65 +193,5 @@ export class AppService {
     ctx.restore()
     return canvas.toDataURL();
   };
-
-  public getBase64ImageFromURL(url) {
-    return new Promise((resolve, reject) => {
-      var img = new Image();
-      img.setAttribute("crossOrigin", "anonymous");
-
-      img.onload = () => {
-        var canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-
-        var dataURL = canvas.toDataURL("image/png");
-
-        resolve(dataURL);
-      };
-
-      img.onerror = error => {
-        reject(error);
-      };
-
-      img.src = url;
-    });
-  }
-
-  public hoy() {
-    return new Date().toJSON().slice(0, 10);
-  }
-
-  public oracionFecha(date: string) {
-    /*
-        Arreglo de meses en español o en inglés. Usa la versión que necesites.
-    */
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-    //const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    const yyyy = date.split("-")[0]
-    const mm = Number(date.split("-")[1]) - 1
-    let dd = date.split("-")[2]
-
-    if (Number(dd) < 10) {
-      dd = dd.substring(1)
-    }
-
-    return dd + " de " + meses[mm] + " del " + yyyy
-    /*
-        Si lo qusiéramos en inglés
-        return months[mm] + " " + dd + "th " + yyyy 
-    */
-  }
-
-  public getBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
-  }
 
 }

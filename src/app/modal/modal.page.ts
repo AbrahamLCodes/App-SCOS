@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonSlides, ModalController, NavParams } from '@ionic/angular';
-import { AppService } from '../services/app.service';
+import { OutputService } from '../services/output/output.service';
+import { ReporteService } from '../services/reporte/reporte.service';
 
 @Component({
   selector: 'app-modal',
@@ -29,10 +30,11 @@ export class ModalPage implements OnInit {
   public items: any = []
 
   constructor(
+    fb: FormBuilder,
     public modalController: ModalController,
-    public appService: AppService,
-    private fb: FormBuilder,
-    private navParams: NavParams
+    private navParams: NavParams,
+    private reporte: ReporteService,
+    private output: OutputService
   ) {
     this.form = fb.group({
       asunto: ["", Validators.required],
@@ -43,7 +45,7 @@ export class ModalPage implements OnInit {
   ngOnInit() {
     this.editar = this.navParams.get("editar")
     this.indexAEditar = this.navParams.get("index")
-    this.items = this.appService.getReporteObject()
+    this.items = this.reporte.getReporteObject()
 
     if (this.editar) {
       this.form.patchValue({
@@ -65,20 +67,20 @@ export class ModalPage implements OnInit {
       const base64Image = await this.getBase64(file)
       base64Array.push(base64Image)
     })).then(result => {
-      if(this.editar){
-        this.appService.updateReporte({
+      if (this.editar) {
+        this.reporte.updateReporte({
           asunto: this.form.value.asunto,
           descripcion: this.form.value.descripcion,
           base64Images: base64Array
         }, this.indexAEditar)
       } else {
-        this.appService.submitReporte({
+        this.reporte.submitReporte({
           asunto: this.form.value.asunto,
           descripcion: this.form.value.descripcion,
           base64Images: base64Array
         })
       }
-      
+
       this.cerrar()
     })
   }
@@ -108,13 +110,13 @@ export class ModalPage implements OnInit {
 
   onSelect(event) {
     if (this.files.length + 1 == 3) {
-      this.appService.acceptMessage("Aviso", "Solo puedes cargar 2 imagenes")
+      this.output.acceptMessage("Aviso", "Solo puedes cargar 2 imagenes")
     } else {
       this.files.push(...event.addedFiles);
     }
   }
 
-  public removeFileAtIndex(index){
+  public removeFileAtIndex(index) {
     this.files.splice(index, 1)
   }
 

@@ -9,15 +9,24 @@
       <ion-textarea formControlName="descripcion" rows="5"></ion-textarea>
     </ion-item>   
 
-    <ngx-dropzone [multiple]="false" class="dropzone" (change)="onSelect($event)">
-      <ngx-dropzone-label>Cargar una imagen de perfil(max 2mb) <br> 500px X 500px </ngx-dropzone-label>
-      <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files; index as index" [file]="f" (click)="removeFileAtIndex(index)">
-      </ngx-dropzone-image-preview>
-    </ngx-dropzone>
+    <div style="margin: 20px">
+      <ngx-dropzone [multiple]="false" class="dropzone" (change)="ngxClicked($event)">
+        <ngx-dropzone-label>Cargar una imagen de perfil(max 2mb) <br> 500px X 500px </ngx-dropzone-label>
+        <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files; index as index" [file]="f" [removable]="true" (click)="onRemove(f)">
+        </ngx-dropzone-image-preview>
+      </ngx-dropzone>
+    </div>
 
-    <section style="margin-left: 20px; margin-top:20px">
-      
-    </section> 
+  
+    <section style="margin-left: 20px; margin-top:20px"></section> 
+
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="12" class="ion-text-center">
+          <ion-button (click)="eliminar()" color="danger">Eliminar imagen</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
     <div class="contFlex">
       <div class="col text-left">

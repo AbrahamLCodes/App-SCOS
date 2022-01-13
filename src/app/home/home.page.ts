@@ -5,6 +5,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { ModalController } from '@ionic/angular';
 import { alertController } from '@ionic/core';
 import { ModalPage } from '../modal/modal.page';
+import Item from '../modelos/item';
 import { PdfService } from '../services/pdf/pdf.service';
 import { ReporteService } from '../services/reporte/reporte.service';
 //import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
@@ -18,7 +19,7 @@ import { ReporteService } from '../services/reporte/reporte.service';
 export class HomePage implements OnInit {
 
   public form: FormGroup
-  public items: any = []
+  public items: Item[] = []
 
   constructor(
     fb: FormBuilder,
@@ -47,8 +48,7 @@ export class HomePage implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    this.cargarItems()
-
+    this.cargarItems();
     /*this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then(
       result => console.log('Has permission?',result.hasPermission),
       err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
@@ -57,12 +57,15 @@ export class HomePage implements OnInit {
     this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE, this.androidPermissions.PERMISSION.GET_ACCOUNTS]);*/
   }
 
-  public generarPDF(): void {
-    this.pdf.generarPDF(this.form.value)
+  public cargarItems(): void {
+    const its: Item[] = this.reporte.getReporteObject();
+    if (its != null || its != undefined) {
+      this.items = this.reporte.getReporteObject();
+    }
   }
 
-  private cargarItems() {
-    this.items = this.reporte.getReporteObject()
+  public generarPDF(): void {
+    this.pdf.generarPDF(this.form.value);
   }
 
   public async clickItem(index: number): Promise<any> {
@@ -88,23 +91,24 @@ export class HomePage implements OnInit {
           text: "Aceptar",
           handler: data => {
             if (data == "ELIMINAR") {
-              this.reporte.deleteReporte(index)
-              this.cargarItems()
+              this.reporte.deleteReporte(index);
+              this.cargarItems();
             } else {
-              this.openModal(true, index)
+              this.openModal(true, index);
             }
           }
         }
       ]
     })
-    alert.present()
+    alert.present();
   }
 
   public async openModal(editar: boolean, index: number): Promise<any> {
-    let falla = false
+    let falla = false;
     if (this.form.value.tipo == 'FALLA') {
-      falla = true
+      falla = true;
     }
+
     const modal = await this.modalController.create({
       component: ModalPage,
       cssClass: 'my-custom-class',
@@ -114,9 +118,10 @@ export class HomePage implements OnInit {
         index: index
       }
     });
+
     modal.onDidDismiss().then(_ => {
-      this.cargarItems()
-    })
+      this.cargarItems();
+    });
 
     return await modal.present();
   }

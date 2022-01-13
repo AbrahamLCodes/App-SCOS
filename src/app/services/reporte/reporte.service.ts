@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import Item from 'src/app/modelos/item';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +15,13 @@ export class ReporteService {
       sessionStorage.setItem(this.REPORTE_NAME, JSON.stringify([]));
     }
 
-    let items = this.getReporteObject();
+    let items: Item[] = this.getReporteObject();
     items.push(item);
 
     sessionStorage.setItem(this.REPORTE_NAME, JSON.stringify(items));
   }
 
-  public updateReporte(item: any, index: number) {
+  public updateReporte(item: Item, index: number) {
     let items = this.getReporteObject();
     items[index] = item;
     sessionStorage.setItem(this.REPORTE_NAME, JSON.stringify(items));
@@ -32,7 +33,7 @@ export class ReporteService {
     sessionStorage.setItem(this.REPORTE_NAME, JSON.stringify(items));
   }
 
-  public getReporteObject() {
+  public getReporteObject(): Item[] {
     return JSON.parse(sessionStorage.getItem(this.REPORTE_NAME));
   }
 }

@@ -8,8 +8,9 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 
-import { HttpClientModule } from "@angular/common/http"
-import { FileOpener } from "@ionic-native/file-opener/ngx"
+import { HttpClientModule } from "@angular/common/http";
+import { FileOpener } from "@ionic-native/file-opener/ngx";
+import { SpinnerModule } from './spinner/spinner.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,7 +20,8 @@ import { FileOpener } from "@ionic-native/file-opener/ngx"
     IonicModule.forRoot(), 
     AppRoutingModule,
     NgxDropzoneModule,
-    HttpClientModule
+    HttpClientModule,
+    SpinnerModule
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

@@ -124,7 +124,7 @@ export class ModalPage implements OnInit {
           },
           {
             type: "radio",
-            label: "Agregar imagen",
+            label: "Agregar",
             name: "agregar",
             value: "agregar"
           }

@@ -8,6 +8,7 @@ import { ModalPage } from '../modal/modal.page';
 import Item from '../modelos/item';
 import { PdfService } from '../services/pdf/pdf.service';
 import { ReporteService } from '../services/reporte/reporte.service';
+import { SpinnerService } from '../services/spinner/spinner.service';
 //import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 

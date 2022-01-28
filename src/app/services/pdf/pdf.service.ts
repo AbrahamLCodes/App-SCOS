@@ -6,6 +6,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { MultimediaService } from '../multimedia/multimedia.service';
 import { ReporteService } from '../reporte/reporte.service';
 import { FechaService } from '../fechas/fecha.service';
+import { SpinnerService } from '../spinner/spinner.service';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Injectable({
@@ -17,7 +18,8 @@ export class PdfService {
     private multimedia: MultimediaService,
     private reporte: ReporteService,
     private fechas: FechaService,
-    private fileOpener: FileOpener
+    private fileOpener: FileOpener,
+    private spinner: SpinnerService
   ) { }
 
   public construirRenglones() {
@@ -69,7 +71,7 @@ export class PdfService {
   }
 
   public async generarPDF(datos: any) {
-    const tipo = datos.tipo;
+    this.spinner.show();
     const folio = datos.folio;
     const asunto = datos.asunto;
     const administrador = datos.administrador;
@@ -83,7 +85,7 @@ export class PdfService {
     const docDefinition = {
       pageSize: "A4",
       pageMargins: [20, 130, 20, 70],
-      background: function (currentPage, pageSize) {
+      background: (currentPage, pageSize) => {
         return { image: logoSCOSRotated, width: 300, opacity: 0.1, absolutePosition: { x: 150, y: 370 } }
       },
       header: {
@@ -111,15 +113,15 @@ export class PdfService {
         },
         { text: administrador, margin: [0, 0, 0, 20] },
         { text: "Administrador de " + lugar },
-        { text: "Asnto: " + asunto },
+        { text: "Asunto: " + asunto },
         { text: "Presente.-" },
         { text: "Por medio del presente informo los hallazgos encontrados en " + lugar },
         { canvas: [{ type: 'line', x1: 40, y1: 0, x2: 560, y2: 0, dash: { length: 1, space: 5 }, lineWidth: 1 }], margin: [0, 40, 0, 0], alignment: "center" },
         this.construirRenglones(),
         { text: "Atentamente", absolutePosition: { y: 690 }, alignment: "center", margin: [0, 100, 0, 0] },
         { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 180, y2: 0, lineWidth: 1 }], absolutePosition: { y: 735 }, margin: [0, 40, 0, 0], alignment: "center" },
-        { text: "responsable", alignment: "center", absolutePosition: { y: 740 } },
-        { text: "65678898899", alignment: "center", absolutePosition: { y: 755 } },
+        { text: responsable, alignment: "center", absolutePosition: { y: 740 } },
+        { text: telefono, alignment: "center", absolutePosition: { y: 755 } },
       ],
       footer: {
         columns: [
@@ -134,40 +136,27 @@ export class PdfService {
             margin: [0, 32, 25, 0],
             layout: "noBorders"
           },
-
         ]
       }
     }
 
-    console.log("Antes del base 64");
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-
-    pdfDocGenerator.getBase64(async data => {
+    await pdfDocGenerator.getBase64(async data => {
       try {
         let path = `pdf/reporte.pdf`
-        console.log("Antes del Filesystem");
-
         const result = await Filesystem.writeFile({
           path,
           data,
           directory: Directory.Documents,
           recursive: true
         })
-
-        console.log("Despues del File system");
-        console.log("Antes del open");
-
         this.fileOpener.open(`${result.uri}`, 'application/pdf')
-        console.log("ABRIENDO FILE OPENEEEER");
-
       } catch (e) {
         console.log("No fue posible crear el archivo");
         console.log(e);
       }
     })
-
-    console.log("Despues del base 64");
-
+    this.spinner.hide();
   }
 
   public writeRotatedImage = imagen => {

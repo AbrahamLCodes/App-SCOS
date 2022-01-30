@@ -7,6 +7,7 @@ import { MultimediaService } from '../multimedia/multimedia.service';
 import { ReporteService } from '../reporte/reporte.service';
 import { FechaService } from '../fechas/fecha.service';
 import { SpinnerService } from '../spinner/spinner.service';
+import { alertController } from '@ionic/core';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Injectable({
@@ -141,9 +142,10 @@ export class PdfService {
     }
 
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+    const currentDate = new Date().toLocaleString().replace(/[,:\s\/]/g, '-');
     await pdfDocGenerator.getBase64(async data => {
       try {
-        let path = `pdf/reporte.pdf`
+        let path = `reporte${currentDate}.pdf`
         const result = await Filesystem.writeFile({
           path,
           data,
@@ -152,8 +154,11 @@ export class PdfService {
         })
         this.fileOpener.open(`${result.uri}`, 'application/pdf')
       } catch (e) {
-        console.log("No fue posible crear el archivo");
-        console.log(e);
+        const alerter = await alertController.create({
+          header: "Error al generar PDF",
+          message: e
+        });
+        alerter.present();
       }
     })
     this.spinner.hide();
